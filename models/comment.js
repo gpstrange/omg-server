@@ -12,13 +12,15 @@ const commentSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'user'
     },
+    username: String,
     message: String
   }, { timestamps: true });
 
 commentSchema.pre('save', function(next) {
     const user = cls.get('user');
     this.createdAt = new Date();
-    this.createdBy = user._id;
+    this.username = user.username;
+    this.userId = user._id;
     return next();
 });
 

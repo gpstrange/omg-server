@@ -2,6 +2,7 @@ const Like = require('../models/like');
 const Gossip = require('../models/gossip');
 const logger = require('../utils/log4js').getLogger('GOSSIP-CTRL');
 const Errors = require('../errors');
+const ObjectId = require('mongodb').ObjectId;
 
 module.exports.getGossip = async (req, res, next) => {
     if (!req.params.groupId) {
@@ -10,14 +11,14 @@ module.exports.getGossip = async (req, res, next) => {
 
     let gossips;
     try {
-        gossips = await Gossip.find({groupId: ObjectId(req.params.groupId)}).exec();
+        gossips = await Gossip.find({groupId: ObjectId(req.params.groupId)}).lean().exec();
         const gossipIds = gossips.map((g) => g._id);
 
-        const likes = Like.find({userId: req.user._id, gossipId: { $in: gossipIds}}).exec();
-        const likedIds = likes.map((like) => like.gossipId);
+        const likes = await Like.find({userId: req.user._id, gossipId: { $in: gossipIds}}).lean().exec();
+        const likedIds = likes.map((like) => String(like.gossipId));
 
         gossips.forEach((gossip) => {
-            if (likedIds.includes(gossip._id)) {
+            if (likedIds.includes(String(gossip._id))) {
                 gossip.userLiked = true;
             }
         })
@@ -34,11 +35,11 @@ module.exports.likeGossip = async (req, res, next) => {
         return next(Errors.invalidRequest('Invalid Gossip'));
     }
 
-    let gossips;
+    let gp;
     try {
-        await Gossip.findOneAndUpdate(
-            {gossipId: ObjectId(req.body.gossipId)},
-            {likesNumber: { $inc: 1}}
+        gp = await Gossip.findOneAndUpdate(
+            {_id: ObjectId(req.body.gossipId)},
+            {$inc: {likesNumber: 1}}
         ).exec();
 
         const like = new Like({
@@ -50,7 +51,7 @@ module.exports.likeGossip = async (req, res, next) => {
         return next(e);
     }
 
-    return res.json({status: 'Success'});
+    return res.json({status: 'Success', gossip: gp});
 };
 
 module.exports.unlikeGossip = async (req, res, next) => {
@@ -58,10 +59,11 @@ module.exports.unlikeGossip = async (req, res, next) => {
         return next(Errors.invalidRequest('Invalid Gossip'));
     }
 
+    let gp;
     try {
-        await Gossip.findOneAndUpdate(
-            {gossipId: ObjectId(req.body.gossipId)},
-            {likesNumber: { $inc: -1}}
+        gp = await Gossip.findOneAndUpdate(
+            {_id: ObjectId(req.body.gossipId)},
+            {$inc: {likesNumber: -1}}
         ).exec();
 
         await Like.remove({userId: req.user._id, gossipId: ObjectId(req.body.gossipId)});
@@ -69,5 +71,5 @@ module.exports.unlikeGossip = async (req, res, next) => {
         return next(e);
     }
 
-    return res.json({status: 'Success'});
+    return res.json({status: 'Success', gossip: gp});
 };

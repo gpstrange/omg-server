@@ -28,6 +28,7 @@ const jwtMiddleWate = (secrets) => {
                 return next(Errors.tokenExpired());
             }
 
+            req.user = data;
             cls.set('user', data);
             logger.debug('User autheticated');
             return next();

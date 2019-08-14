@@ -35,7 +35,7 @@ module.exports.login = async (req, res, next) => {
 
     let user;
     try {
-        user = await UserModel.findOne({username: String(req.body.name)}).exec();
+        user = await UserModel.findOne({username: String(req.body.name)}).lean().exec();
     } catch (e) {
         return next(e);
     }
@@ -58,10 +58,11 @@ module.exports.login = async (req, res, next) => {
     }
 
     let token = auth.generateToken(user);
-    logger.debug('Generated token for user ' + user.value._id);
+    logger.debug('Generated token for user ' + user._id);
     return res.json({
         status: 'ok',
-        token: token
+        token: token,
+        user
     });
 };
 

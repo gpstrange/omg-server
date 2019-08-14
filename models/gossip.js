@@ -12,13 +12,19 @@ const gossipSchema = new mongoose.Schema({
         type: mongoose.SchemaTypes.ObjectId,
         ref: 'user'
     },
-    likesNumber: Number
+    username: String,
+    likesNumber: {type: Number, default: 0},
+    message: String
   }, { timestamps: true });
 
 gossipSchema.pre('save', function(next) {
+    if (this.isNew) {
+        this.likesNumber = 0;
+    }
     const user = cls.get('user');
     this.createdAt = new Date();
-    this.createdBy = user._id;
+    this.userId = user._id;
+    this.username = user.username;
     return next();
 });
 
