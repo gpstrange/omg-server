@@ -1,0 +1,33 @@
+{
+  "name": "omg-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://guru2402@gitlab.com/Guru2402/omg-server.git"
+  },
+  "author": "guru2402",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/Guru2402/omg-server/issues"
+  },
+  "homepage": "https://gitlab.com/Guru2402/omg-server#readme",
+  "dependencies": {
+    "bcrypt": "3.0.6",
+    "body-parser": "1.18.3",
+    "cls-hooked": "4.2.2",
+    "cors": "2.8.4",
+    "express": "4.16.3",
+    "express-restify-mongoose": "^5.0.0",
+    "jsonwebtoken": "8.2.1",
+    "log4js": "2.7.0",
+    "mongoose": "5.1.2",
+    "passport": "0.4.0",
+    "passport-jwt": "4.0.0"
+  }
+}
