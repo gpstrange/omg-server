@@ -1,5 +1,6 @@
 const Like = require('../models/like');
 const Gossip = require('../models/gossip');
+const Comment = require('../models/comment');
 const logger = require('../utils/log4js').getLogger('GOSSIP-CTRL');
 const Errors = require('../errors');
 const ObjectId = require('mongodb').ObjectId;
@@ -11,17 +12,18 @@ module.exports.getGossip = async (req, res, next) => {
 
     let gossips;
     try {
-        gossips = await Gossip.find({groupId: ObjectId(req.params.groupId)}).sort({createdAt: -1}).lean().exec();
+        gossips = await Gossip.find({groupId: ObjectId(req.params.groupId)}).sort({createdAt: -1}).limit(50).lean().exec();
         const gossipIds = gossips.map((g) => g._id);
 
         const likes = await Like.find({userId: req.user._id, gossipId: { $in: gossipIds}}).lean().exec();
         const likedIds = likes.map((like) => String(like.gossipId));
 
-        gossips.forEach((gossip) => {
+        for (const gossip of gossips) {
+            gossip.commentsCount = await Comment.count({gossipId: gossip._id});
             if (likedIds.includes(String(gossip._id))) {
                 gossip.userLiked = true;
             }
-        })
+        }
 
     } catch(e) {
         return next(e);
