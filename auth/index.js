@@ -70,7 +70,6 @@ class JwtAuth {
             throw e;
         }
         let data;
-        console.log(user);
         try {
             data = await User.findOne({ _id: ObjectId(user._id) }).exec();
         } catch(e) {

@@ -99,6 +99,35 @@ module.exports.signup = async (req, res, next) => {
     logger.debug('Generated token for user ' + user._id);
     return res.json({
         status: 'ok',
-        token: token
+        token: token,
+        user
+    });
+};
+
+module.exports.exitGroup = async (req, res, next) => {
+    logger.debug(`Exit group request by user ${req.user._id}`);
+
+    let user;
+    try {
+        user = await UserModel.findOne({_id: req.user._id}).exec();
+    } catch (e) {
+        return next(e);
+    }
+
+    if (!user) {
+        return next(Errors.userNotFound('Something went wrong'));
+    }
+
+    try {
+        user.groupId = undefined;
+        await user.save();
+    } catch (e) {
+        return next(e);
+    }
+
+    logger.debug('user exited group ' + user._id);
+    return res.json({
+        status: 'ok',
+        user
     });
 };
