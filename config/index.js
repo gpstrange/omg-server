@@ -1,5 +1,5 @@
 const config = {
-    API_PORT: process.env.API_PORT || 3000,
+    API_PORT: process.env.API_PORT || 5000,
     MONGO_URL: process.env.MONGO_URL || 'mongodb://localhost:27017/omg',
     JWT_SECRET: process.env.JWT_SECRET || 'no_secret',
     JWT_PL_SECRET: process.env.JWT_PL_SECRET || 's3cr3t',

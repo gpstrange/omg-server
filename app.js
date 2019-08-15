@@ -16,7 +16,8 @@ app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
 
 if (process.env.NODE_ENV !== 'PRODUCTION') {
     const cors = require('cors');
-    const whiteList = ['http://localhost:8080', 'chrome-extension://fhbjgbiflinjbdggehcddcbncdddomop'];
+    const whiteList = ['http://www.ohmygossip.in', 'http://ohmygossip.in', 'http://139.59.85.39:8080'];
+
     const corsOptions = {
         origin: (origin, cb) => {
             if (!origin || whiteList.indexOf(origin) !== -1) {
