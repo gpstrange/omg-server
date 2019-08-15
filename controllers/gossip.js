@@ -11,7 +11,7 @@ module.exports.getGossip = async (req, res, next) => {
 
     let gossips;
     try {
-        gossips = await Gossip.find({groupId: ObjectId(req.params.groupId)}).lean().exec();
+        gossips = await Gossip.find({groupId: ObjectId(req.params.groupId)}).sort({createdAt: -1}).lean().exec();
         const gossipIds = gossips.map((g) => g._id);
 
         const likes = await Like.find({userId: req.user._id, gossipId: { $in: gossipIds}}).lean().exec();
