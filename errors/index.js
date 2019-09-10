@@ -19,21 +19,21 @@ const errors = {
         let err = new QuizError();
         err.addStatusCode(401);
         err.addCode('INVALID_LOGIN');
-        err.addMessage(msg || 'User email and password do not match');
+        err.addMessage(msg || 'Username and password do not match');
         return err;
     },
     userNotFound: (msg) => {
         let err = new QuizError();
         err.addStatusCode(401);
         err.addCode('NO_USER');
-        err.addMessage(msg || 'User email not found');
+        err.addMessage(msg || 'Username not found');
         return err;
     },
     userAlreadyRegistered: (msg) => {
         let err = new QuizError();
         err.addStatusCode(400);
         err.addCode('ALREADY_REGISTERED');
-        err.addMessage(msg || 'User already registered');
+        err.addMessage(msg || 'Username already registered');
         return err;
     },
     notFound: (msg) => {
